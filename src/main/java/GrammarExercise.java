@@ -1,6 +1,7 @@
 import java.util.*;
 
 public class GrammarExercise {
+
     public static void main(String[] args) {
 
         //需要从命令行读入
