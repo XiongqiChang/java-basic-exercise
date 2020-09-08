@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GrammarExercise {
 
@@ -8,66 +9,58 @@ public class GrammarExercise {
         Scanner scanner = new Scanner(System.in);
         System.out.println("请输入第一个字符");
         String firstWordList = scanner.nextLine();
-
-
         System.out.println("请输入第二个字符");
         String secondWordList = scanner.nextLine();
-
-
         List<String> result = findCommonWordsWithSpace(firstWordList, secondWordList);
         System.out.println(result);
-
 
     }
 
     public static List<String> findCommonWordsWithSpace(String firstWordList, String secondWordList) {
-        //在这编写实现代码
-        List<String> commonWordsList = new ArrayList<>();
-        boolean character = isCharacter(firstWordList, secondWordList);
-        if (character) {
-            String[] firstWordArray = firstWordList.split(",");
-            String[] secondWordArray = secondWordList.split(",");
-            for (int i = 0; i < firstWordArray.length; i++) {
-                for (int j = 0; j < secondWordArray.length; j++) {
-                    if (firstWordArray[i].equalsIgnoreCase(secondWordArray[j])) {
-                          if (!commonWordsList.contains(firstWordArray[i]))
-                              commonWordsList.add(firstWordArray[i]);
-                    }
-                }
-            }
-        } else {
-            System.out.println("input not valid");
-            throw new RuntimeException();
+
+        if (!isCharacter(firstWordList) || !isCharacter(secondWordList)){
+            throw  new RuntimeException("input is valid");
         }
-        List<String> strings = addSpace(commonWordsList);
-        Collections.sort(strings);
-        return strings;
+        List<String> firstList = Arrays.asList(firstWordList.toUpperCase().split(","));
+        List<String> secondList = Arrays.asList(secondWordList.toUpperCase().split(","));
+
+        List<String> collect = firstList.stream().filter(fl -> secondList.contains(fl)).distinct().collect(Collectors.toList());
+        List<String>  result  = addSpace(collect);
+        Collections.sort(result);
+        return  result;
+
     }
 
-    private static boolean isCharacter(String a, String b) {
+    /**
+     * 判断是否是正常的字符
+     * @param a
+     * @return
+     */
+    private static boolean isCharacter(String a) {
 
         boolean match1 = true;
-        boolean match2 = true;
+
 
         String[] split1 = a.split(",");
-        String[] split2 = b.split(",");
 
         for (int i = 0; i < split1.length; i++) {
-            match1 = match1 & split1[i].matches("[a-zA-Z]+");
+            match1 = match1 && split1[i].matches("[a-zA-Z]+");
         }
-
-        for (int j = 0; j < split2.length; j++) {
-            match2 = split2[j].matches("[a-zA-Z]+");
-        }
-        return match1 && match2;
+        return match1;
     }
 
-    private static List<String> addSpace(List<String> list) {
-        List<String> newList = new ArrayList<>();
-        for (String name : list) {
-            String s =  name.replace("", " ").trim();
-            newList.add(s.toUpperCase());
+    /**
+     * 对list加上空格
+     * @param list
+     * @return
+     */
+        private static List<String> addSpace(List<String> list) {
+            List<String> newList = new ArrayList<>();
+            for (String name : list) {
+                String s = name.replace("", " ").trim();
+                newList.add(s.toUpperCase());
+            }
+            return newList;
         }
-        return newList;
     }
-}
+
